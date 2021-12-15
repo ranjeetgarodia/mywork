@@ -26,7 +26,7 @@ module "vnet" {
   subnet_names        = ["${var.name}-subnet-1"]
   tags                = null
 
-  depends_on = [azurerm_resource_group.example]
+  depends_on = [azurerm_resource_group.example,azurerm_policy_assignment.example ]
 }
 
 # Create Network Security Group and rule

@@ -7,7 +7,7 @@ variable "name" {
 variable "location" {
   type        = string
   description = "(optional) describe your variable"
-  default     = "west us"
+  default     = "west us2"
 }
 
 variable "storage_accountname" {

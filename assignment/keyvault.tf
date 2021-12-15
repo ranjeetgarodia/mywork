@@ -33,6 +33,8 @@ resource "azurerm_key_vault" "example" {
       "recover"
     ]
   }
+
+  depends_on = [azurerm_policy_assignment.example ]
 }
 
 data "azurerm_key_vault" "keyvault" {

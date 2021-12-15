@@ -1,2 +1,2 @@
 name                = "statestret"
-storage_accountname = "test21"
+storage_accountname = "test23"
