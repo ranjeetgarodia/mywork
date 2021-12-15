@@ -1,19 +1,32 @@
 # https://docs.microsoft.com/en-us/azure/developer/terraform/create-linux-virtual-machine-with-infrastructure
 
 //create vnet:
-resource "azurerm_virtual_network" "example" {
-  name                = "${var.name}-vnet"
-  address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
-}
+# resource "azurerm_virtual_network" "example" {
+#   name                = "${var.name}-vnet"
+#   address_space       = ["10.0.0.0/16"]
+#   location            = azurerm_resource_group.example.location
+#   resource_group_name = azurerm_resource_group.example.name
+# }
 
 //create subnet
-resource "azurerm_subnet" "example" {
-  name                 = "${var.name}-subnet-1"
-  resource_group_name  = azurerm_resource_group.example.name
-  virtual_network_name = azurerm_virtual_network.example.name
-  address_prefixes     = ["10.0.2.0/24"]
+# resource "azurerm_subnet" "example" {
+#   name                 = "${var.name}-subnet-1"
+#   resource_group_name  = azurerm_resource_group.example.name
+#   virtual_network_name = azurerm_virtual_network.example.name
+#   address_prefixes     = ["10.0.2.0/24"]
+# }
+
+module "vnet" {
+  source = "Azure/vnet/azurerm"
+  vnet_name           = "${var.name}-vnet"
+  resource_group_name = azurerm_resource_group.example.name
+  vnet_location       = azurerm_resource_group.example.location
+  address_space       = ["10.0.0.0/16"]
+  subnet_prefixes     = ["10.0.2.0/24"]
+  subnet_names        = ["${var.name}-subnet-1"]
+  tags                = null
+
+  depends_on = [azurerm_resource_group.example]
 }
 
 # Create Network Security Group and rule
@@ -58,14 +71,13 @@ resource "azurerm_network_interface" "example" {
   resource_group_name = azurerm_resource_group.example.name
 
   ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.example.id
+    name = "internal"
+    # subnet_id                     = azurerm_subnet.example.id
+    subnet_id                     = module.vnet.vnet_subnets[0]
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.example.id
   }
-
 }
-
 
 # Connect the security group to the network interface
 resource "azurerm_network_interface_security_group_association" "example" {

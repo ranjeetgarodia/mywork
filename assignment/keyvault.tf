@@ -3,14 +3,6 @@
 
 data "azurerm_client_config" "current" {}
 
-# resource "azurerm_resource_group" "example" {
-#   name     = "${var.name}-rg"
-#   location = var.location
-#   tags = {
-#     environment = "Terraform Demo"
-#   }
-# }
-
 resource "azurerm_key_vault" "example" {
   name                       = "${var.name}-kv"
   location                   = azurerm_resource_group.example.location
